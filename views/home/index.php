@@ -21,6 +21,8 @@
         100=>[ 138, 142, 117, 124, 147, 112,],
     ]];
     $this->title = 'Калькулятор стоимости поставки сырья';
+    require 'C:/OpenServer/domains/app-calculator/vendor/autoload.php';
+    use Tlr\Tables\Elements\Table;
 ?>
         <div class="row mt-5 p-5">
             <h1>Калькулятор стоимости поставки сырья</h1>
@@ -57,36 +59,21 @@
         <?php foreach ($types as $keyType => $type): ?>
             <p>        
             <h3><?= $type ?></h3>
-            <table class="table table-bordered table-striped ">
-                <thead >
-                    <tr>
-                        <th scope="col">
-                            <table>
-                                <tr><th>Месяц</th></tr>
-                                <tr><th>Тоннаж</th></tr>
-                            </table>
-                        </th>
-                        <?php foreach ($months as $month): ?>
-                            <th scope="col">
-                            <table>
-                                <tr><th><?= $month ?></th></tr>
-                                <tr><th>_________</th></tr>
-                            </table>
-                            </th>
-                        <?php endforeach ?>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <?php foreach ($tonnages as $keyTonnage => $tonnage): ?>
-                            <th scope="row"><?= $tonnage ?></th>
-                            <?php for($i = 0; $i < 6; $i++): ?>
-                                    <td><?= $rated[$keyType][$keyTonnage][$i] ?></td>
-                                <?php endfor ?>
-                            </tr>
-                        <?php endforeach ?>
-                </tbody>
-            </table>
+            <?= $table = new Table;
+            $table->class('table table-bordered table-striped');
+            $row = $table->header()->row();
+            $row->cell('Месяц');
+            foreach ($months as $month){
+                 $row->cell($month); 
+            }
+            foreach ($tonnages as $keyTonnage => $tonnage){
+                $row = $table->body()->row(); 
+                $row->cell($tonnage);
+                    for($i = 0; $i < 6; $i++){
+                        $row->cell($rated[$keyType][$keyTonnage][$i]);
+                    }
+            } ?>
+            <?= $table->render() ?>
         </p>
         <?php endforeach ?>
         <?php if( isset($_POST) && count($_POST) === 3): ?>
