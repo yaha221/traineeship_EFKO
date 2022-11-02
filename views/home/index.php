@@ -59,10 +59,13 @@
         </p>
         <?php endforeach ?>
         <?php if( isset($_POST) && count($_POST) === 3): ?>
-            <p>Выбранный месяц: <?= $monthPost ?></p>
-            <p>Выбранный тоннаж: <?= $tonnagePost ?></p>
-            <p>Выбранное сырьё: <?= $typePost ?></p>
-            <p>Рассчитанные данные: <?= $tonnagePost * $rated[$typePost][$tonnagePost][$monthPost] ?></p>
+            <p>Выбранный месяц: <?= $monthPost = $form->monthPost ?></p>
+            <p>Выбранный тоннаж: <?= $tonnagePost = $form->tonnagePost?></p>
+            <p>Выбранное сырьё: <?= $typePost = $form->typePost?></p>
+            <p>Рассчитанные данные: <?= $tonnagePost * $rated
+            [$typePost]
+            [$tonnagePost]
+            [$monthPost] ?></p>
         <?php else: ?>
             <p>Введите данные</p>
         <?php endif ?>

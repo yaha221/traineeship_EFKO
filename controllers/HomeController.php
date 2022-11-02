@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\CalculatedForm;
 use Yii;
 use yii\web\Controller;
 use app\models\Data;
@@ -9,13 +10,11 @@ use app\models\Data;
 class HomeController extends Controller
 {
     public function actionIndex(){
-        $request = Yii::$app->request;
+        $form = new CalculatedForm;
         $data = new Data;
-        if ($request->isPost) {
-            $monthPost = $request->post("month");
-            $tonnagePost = $request->post("tonnag");
-            $typePost = $request->post("type");
-            return $this->render('index',['monthPost' => $monthPost, 'tonnagePost' => $tonnagePost, 'typePost' => $typePost,'data' => $data]);
+        if (Yii::$app->request->isPost) {
+            $form->setData();
+            return $this->render('index',['form' => $form,'data' => $data]);
         }
         else {
             return $this->render('index',['data' => $data]);
