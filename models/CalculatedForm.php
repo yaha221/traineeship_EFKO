@@ -11,6 +11,19 @@ class CalculatedForm extends Model
     public $tonnagePost;
     public $typePost;
 
+    public function rules(){
+        [['type','tonnage','month'],'required','message => Введите в {attributes} что-нибудь'];
+        [['type','tonnage','month'],'safe'];
+    }
+
+    public function labels(){
+        return[
+            'type' => "Тип",
+            'tonnage' => "Тоннаж",
+            'month' => "Месяц"
+        ];
+    }
+
     public function setData(){
         $request=Yii::$app->request;
         $this->monthPost = $request->post("month");

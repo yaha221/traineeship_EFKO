@@ -3,12 +3,18 @@
     $tonnages = $data->tonnages;
     $types = $data->types;
     $rated= $data->rated;
+    $monthPost = $form->monthPost;
+    $tonnagePost = $form->tonnagePost;
+    $typePost = $form->typePost;
     $this->title = 'Калькулятор стоимости поставки сырья';
+    use app\models\Data;
     use Tlr\Tables\Elements\Table;
+    use yii\helpers\Html;
+    use yii\widgets\ActiveForm;
 ?>
         <div class="row mt-5 p-5">
             <h1>Калькулятор стоимости поставки сырья</h1>
-            <form action="index.php" method="POST">
+            <form id= "data" action="index.php" method="POST">
                 <div class="mb-3">
                 <label for="month" class="form-label">Месяц</label>
                     <select class="form-select form-select-lg " name="month" aria-label="Default select example">
@@ -38,6 +44,9 @@
             </div>
             <button type="submit" class="btn btn-primary">Рассчитать</button>
         </form>
+
+        <div id="result-box"></div>
+
         <?php foreach ($types as $keyType => $type): ?>
             <p>        
             <h3><?= $type ?></h3>
@@ -59,9 +68,9 @@
         </p>
         <?php endforeach ?>
         <?php if( isset($_POST) && count($_POST) === 3): ?>
-            <p>Выбранный месяц: <?= $monthPost = $form->monthPost ?></p>
-            <p>Выбранный тоннаж: <?= $tonnagePost = $form->tonnagePost?></p>
-            <p>Выбранное сырьё: <?= $typePost = $form->typePost?></p>
+            <p>Выбранный месяц: <?= $monthPost ?></p>
+            <p>Выбранный тоннаж: <?= $tonnagePost ?></p>
+            <p>Выбранное сырьё: <?= $typePost ?></p>
             <p>Рассчитанные данные: <?= $tonnagePost * $rated[$typePost][$tonnagePost][$monthPost] ?></p>
         <?php else: ?>
             <p>Введите данные</p>

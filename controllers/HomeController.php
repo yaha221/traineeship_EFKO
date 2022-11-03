@@ -16,4 +16,8 @@ class HomeController extends Controller
         $form->setData();
         return $this->render('index',['form' => $form,'data' => $data]);
     }
+
+    public function actionTest(){
+        return 'test';
+    }
 }

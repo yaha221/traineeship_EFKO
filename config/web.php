@@ -45,14 +45,15 @@ $config = [
             ],
         ],
         'db' => $db,
-        /*
+        
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                'home/test' => 'home/test',
             ],
         ],
-        */
+        
     ],
     'params' => $params,
 ];
