@@ -12,12 +12,8 @@ class HomeController extends Controller
     public function actionIndex(){
         $form = new CalculatedForm;
         $data = new Data;
-        if (Yii::$app->request->isPost) {
-            $form->setData();
-            return $this->render('index',['form' => $form,'data' => $data]);
-        }
-        else {
-            return $this->render('index',['data' => $data]);
-        }
+        $form->load(Yii::$app->request->post());
+        $form->setData();
+        return $this->render('index',['form' => $form,'data' => $data]);
     }
 }
