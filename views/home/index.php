@@ -1,79 +1,49 @@
 <?php
-    $months = $data->months;
-    $tonnages = $data->tonnages;
-    $types = $data->types;
-    $rated= $data->rated;
-    $monthPost = $form->monthPost;
-    $tonnagePost = $form->tonnagePost;
-    $typePost = $form->typePost;
     $this->title = 'Калькулятор стоимости поставки сырья';
-    use app\models\Data;
     use Tlr\Tables\Elements\Table;
     use yii\helpers\Html;
-    use yii\widgets\ActiveForm;
+    use yii\bootstrap\ActiveForm;
+
 ?>
         <div class="row mt-5 p-5">
             <h1>Калькулятор стоимости поставки сырья</h1>
-            <form id= "data" action="index.php" method="POST">
-                <div class="mb-3">
-                <label for="month" class="form-label">Месяц</label>
-                    <select class="form-select form-select-lg " name="month" aria-label="Default select example">
-                        <option selected disabled>Выберети месяц</option>
-                        <?php foreach ($months as $key => $value): ?>
-                            <option value="<?= $key ?>"><?= $value ?></option>
-                        <?php endforeach ?>
-                </select>
+            <?php $form = ActiveForm::begin([
+                'id' => 'calculated-form',
+            ]); ?>
+            
+            <?= $form->field($calculatedForm, 'month')->dropDownList($data->months,['prompt' => 'Выберите месяц',])->label('Месяц') ?>
+            
+            <?= $form->field($calculatedForm, 'tonnage')->dropDownList($data->tonnages,['prompt' => 'Выберите тоннаж',])->label('Тоннаж') ?>
+            
+            <?= $form->field($calculatedForm, 'type')->dropDownList($data->types,['prompt' => 'Выберите тип',])->label('Тип') ?>
+            
+            <div class="form-group">
+                <?= Html::submitButton('Расчитать', ['class' => 'btn btn-primary']) ?>
             </div>
-            <div class="mb-3">
-            <label for="tonnag" class="form-label">Тоннаж</label>
-                <select class="form-select form-select-lg" name="tonnag" aria-label="Default select example">
-                        <option selected disabled>Тоннаж</option>
-                        <?php foreach ($tonnages as $key => $value): ?>
-                            <option value="<?= $key ?>"><?= $value ?></option>
-                        <?php endforeach ?>
-                </select>
-            </div>
-            <div class="mb-3">
-            <label for="type" class="form-label">Сырьё</label>
-                <select class="form-select form-select-lg" name="type" aria-label="Default select example">
-                        <option selected disabled>Тип сырья</option>
-                        <?php foreach ($types as $key => $value): ?>
-                            <option value="<?= $key ?>"><?= $value ?></option>
-                        <?php endforeach ?>
-                </select>
-            </div>
-            <button type="submit" class="btn btn-primary">Рассчитать</button>
-        </form>
+            <?php ActiveForm::end(); ?>
 
         <div id="result-box"></div>
 
-        <?php foreach ($types as $keyType => $type): ?>
+        <?php foreach ($data->types as $keyType => $typeItem): ?>
             <p>        
-            <h3><?= $type ?></h3>
+            <h3><?= $typeItem ?></h3>
             <?= $table = new Table;
             $table->class('table table-bordered table-striped');
             $row = $table->header()->row();
             $row->cell('Месяц');
-            foreach ($months as $month){
-                 $row->cell($month); 
+            foreach ($data->months as $monthItem){
+                 $row->cell($monthItem); 
             }
-            foreach ($tonnages as $keyTonnage => $tonnage){
+            foreach ($data->tonnages as $keyTonnage => $tonnageItem){
                 $row = $table->body()->row(); 
-                $row->cell($tonnage);
+                $row->cell($tonnageItem);
                     for($i = 0; $i < 6; $i++){
-                        $row->cell($rated[$keyType][$keyTonnage][$i]);
+                        $row->cell($data->rated[$keyType][$keyTonnage][$i]);
                     }
             } ?>
             <?= $table->render() ?>
         </p>
         <?php endforeach ?>
-        <?php if( isset($_POST) && count($_POST) === 3): ?>
-            <p>Выбранный месяц: <?= $monthPost ?></p>
-            <p>Выбранный тоннаж: <?= $tonnagePost ?></p>
-            <p>Выбранное сырьё: <?= $typePost ?></p>
-            <p>Рассчитанные данные: <?= $tonnagePost * $rated[$typePost][$tonnagePost][$monthPost] ?></p>
-        <?php else: ?>
-            <p>Введите данные</p>
-        <?php endif ?>
+        <p>Введите данные</p>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
