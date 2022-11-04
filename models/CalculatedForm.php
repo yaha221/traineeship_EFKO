@@ -7,27 +7,29 @@ use Yii;
 
 class CalculatedForm extends Model
 {
-    public $monthPost;
-    public $tonnagePost;
-    public $typePost;
+    public $month;
+    public $tonnage;
+    public $type;
 
     public function rules(){
-        [['type','tonnage','month'],'required','message => Введите в {attributes} что-нибудь'];
-        [['type','tonnage','month'],'safe'];
+        return[
+            [['type','tonnage','month',],'required','message' => 'Введите в {attribute} что-нибудь',],
+            [['type','tonnage','month',],'safe',],
+        ];
     }
 
-    public function labels(){
+    public function attributeLabels(){
         return[
-            'type' => "Тип",
-            'tonnage' => "Тоннаж",
-            'month' => "Месяц"
+            'type' => "тип",
+            'tonnage' => "тоннаж",
+            'month' => "месяц"
         ];
     }
 
     public function setData(){
         $request=Yii::$app->request;
-        $this->monthPost = $request->post("month");
-        $this->tonnagePost = $request->post("tonnag");
-        $this->typePost = $request->post("type");
+        $this->month = $request->post('month');
+        $this->tonnage = $request->post('tonnage');
+        $this->type = $request->post('type');
     }
 }
