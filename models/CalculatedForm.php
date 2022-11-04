@@ -25,11 +25,4 @@ class CalculatedForm extends Model
             'month' => "месяц"
         ];
     }
-
-    public function setData(){
-        $request=Yii::$app->request;
-        $this->month = $request->post('month');
-        $this->tonnage = $request->post('tonnage');
-        $this->type = $request->post('type');
-    }
 }
