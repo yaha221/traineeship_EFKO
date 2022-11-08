@@ -2,9 +2,11 @@
 
 namespace app\controllers;
 
-use app\models\CalculatedForm;
 use Yii;
 use yii\web\Controller;
+use yii\bootstrap\ActiveForm;
+use yii\web\Response;
+use app\models\CalculatedForm;
 use app\models\Data;
 
 class HomeController extends Controller
@@ -12,13 +14,27 @@ class HomeController extends Controller
     public function actionIndex(){
         $calculatedForm  = new CalculatedForm();
         $data = new Data();
-        if($calculatedForm->load(Yii::$app->request->post()) && $calculatedForm->validate()){
-            return $this->render('indexPost',['calculatedForm' => $calculatedForm  ,'data' => $data]);
+        if (Yii::$app->request->isAjax && $calculatedForm->load(Yii::$app->request->post())) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return ActiveForm::validate($calculatedForm);
         }
         return $this->render('index',['calculatedForm' => $calculatedForm  ,'data' => $data]);
     }
 
-    public function actionTest(){
-        return 'test';
+    public function actionFeedback(){
+        /*return 'Запрос принят!';*/
+        $calculatedForm  = new CalculatedForm();
+        $data = new Data();
+        if($calculatedForm->load(Yii::$app->request->post()) && Yii::$app->request->isAjax){
+            $result = $data -> rated[$calculatedForm -> type][$calculatedForm -> tonnage][$calculatedForm -> month];
+            $type = $data -> types[$calculatedForm -> type];
+            $table = $data -> priceTable($calculatedForm -> type);
+            $message =  $data->viewResult($result, $type, $table);
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            $feedback =[
+                'message' => $message
+            ];
+            return $feedback;
+        }
     }
 }
