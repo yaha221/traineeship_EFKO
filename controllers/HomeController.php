@@ -22,12 +22,3 @@ class HomeController extends Controller
         return 'test';
     }
 }
-/*
-;
-$tonnages = $data->tonnages;
-$types = $data->types;
-$rated= $data->rated;
-$monthPost = $form->monthPost;
-$tonnagePost = $form->tonnagePost;
-$typePost = $form->typePost;
-*/
