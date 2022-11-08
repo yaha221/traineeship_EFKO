@@ -3,13 +3,13 @@
 namespace app\models;
 
 use yii\base\Model;
-use Yii;
 
 class CalculatedForm extends Model
 {
     public $month;
     public $tonnage;
     public $type;
+
 
     public function rules(){
         return[

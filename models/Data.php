@@ -28,7 +28,8 @@ class Data extends \yii\base\BaseObject
         100 => [ 138, 142, 117, 124, 147, 112,],
     ]];
 
-    public function priceTable($type){
+
+    public function makeTable($type){
         $table = new Table;
         $table->class('table table-bordered table-striped');
             $row = $table->header()->row();

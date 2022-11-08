@@ -28,7 +28,7 @@ class HomeController extends Controller
         if($calculatedForm->load(Yii::$app->request->post()) && Yii::$app->request->isAjax){
             $result = $data -> rated[$calculatedForm -> type][$calculatedForm -> tonnage][$calculatedForm -> month];
             $type = $data -> types[$calculatedForm -> type];
-            $table = $data -> priceTable($calculatedForm -> type);
+            $table = $data -> makeTable($calculatedForm -> type);
             $message =  $data->viewResult($result, $type, $table);
             Yii::$app->response->format = Response::FORMAT_JSON;
             $feedback =[
