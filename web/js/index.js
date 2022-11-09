@@ -1,8 +1,3 @@
-    
-    
-    
-    
-    
     $('#calculated-form').on('beforeSubmit', function(){
         var form = $(this);
         var data = form.serialize();

@@ -4,6 +4,9 @@ namespace app\models;
 
 use yii\base\Model;
 
+/**
+ * CalculatedForm является моделью расчётной формы
+ */
 class CalculatedForm extends Model
 {
     public $month;
@@ -11,6 +14,9 @@ class CalculatedForm extends Model
     public $type;
 
 
+    /**
+     * @return array правила валидации
+     */
     public function rules(){
         return[
             [['type','tonnage','month',],'required','message' => 'Введите в {attribute} что-нибудь',],
@@ -18,6 +24,9 @@ class CalculatedForm extends Model
         ];
     }
 
+    /**
+     * @return array изменнённые атрибуты labels
+     */
     public function attributeLabels(){
         return[
             'type' => "тип",

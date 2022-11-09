@@ -11,6 +11,11 @@ use app\models\Data;
 
 class HomeController extends Controller
 {
+    /**
+     * Отображение домашней страницы и ajax валидация формы
+     * 
+     * @return string|string
+     */
     public function actionIndex(){
         $calculatedForm  = new CalculatedForm();
         $data = new Data();
@@ -18,20 +23,27 @@ class HomeController extends Controller
             Yii::$app->response->format = Response::FORMAT_JSON;
             return ActiveForm::validate($calculatedForm);
         }
-        return $this->render('index',['calculatedForm' => $calculatedForm  ,'data' => $data]);
+        return $this->render('index', [
+            'calculatedForm' => $calculatedForm ,
+            'data' => $data,
+        ]);
     }
 
+    /**
+     * Формирует ответ на ajax запрос
+     * 
+     * @return string
+     */
     public function actionFeedback(){
-        /*return 'Запрос принят!';*/
         $calculatedForm  = new CalculatedForm();
         $data = new Data();
         if($calculatedForm->load(Yii::$app->request->post()) && Yii::$app->request->isAjax){
-            $result = $data -> rated[$calculatedForm -> type][$calculatedForm -> tonnage][$calculatedForm -> month];
-            $type = $data -> types[$calculatedForm -> type];
-            $table = $data -> makeTable($calculatedForm -> type);
+            $result = $data->rated[$calculatedForm -> type][$calculatedForm -> tonnage][$calculatedForm -> month];
+            $type = $data->types[$calculatedForm -> type];
+            $table = $data->makeTable($calculatedForm -> type);
             $message =  $data->viewResult($result, $type, $table);
             Yii::$app->response->format = Response::FORMAT_JSON;
-            $feedback =[
+            $feedback = [
                 'message' => $message
             ];
             return $feedback;
