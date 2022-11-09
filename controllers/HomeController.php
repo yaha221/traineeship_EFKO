@@ -16,7 +16,8 @@ class HomeController extends Controller
      * 
      * @return string|string
      */
-    public function actionIndex(){
+    public function actionIndex()
+    {
         $calculatedForm  = new CalculatedForm();
         $data = new Data();
         if (Yii::$app->request->isAjax && $calculatedForm->load(Yii::$app->request->post())) {
@@ -34,13 +35,14 @@ class HomeController extends Controller
      * 
      * @return string
      */
-    public function actionFeedback(){
+    public function actionFeedback()
+    {
         $calculatedForm  = new CalculatedForm();
         $data = new Data();
-        if($calculatedForm->load(Yii::$app->request->post()) && Yii::$app->request->isAjax){
-            $result = $data->rated[$calculatedForm -> type][$calculatedForm -> tonnage][$calculatedForm -> month];
-            $type = $data->types[$calculatedForm -> type];
-            $table = $data->makeTable($calculatedForm -> type);
+        if($calculatedForm->load(Yii::$app->request->post()) && Yii::$app->request->isAjax) {
+            $result = $data->rated[$calculatedForm->type][$calculatedForm->tonnage][$calculatedForm->month];
+            $type = $data->types[$calculatedForm->type];
+            $table = $data->makeTable($calculatedForm->type);
             $message =  $data->viewResult($result, $type, $table);
             Yii::$app->response->format = Response::FORMAT_JSON;
             $feedback = [
