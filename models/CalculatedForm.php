@@ -24,8 +24,10 @@ class CalculatedForm extends Model
     public function rules()
     {
         return[
-            [['type','tonnage','month',],'required','message' => 'Введите в {attribute} что-нибудь',],
-            [['type','tonnage','month',],'safe',],
+            // type, tonnage и month являются обязательными полями
+            [['type', 'tonnage', 'month',], 'required', 'message' => 'Введите в {attribute} что-нибудь',],
+            // type, tonnage и month должны быть безопасными
+            [['type', 'tonnage', 'month',], 'safe',],
         ];
     }
 
@@ -37,7 +39,7 @@ class CalculatedForm extends Model
         return[
             'type' => "тип",
             'tonnage' => "тоннаж",
-            'month' => "месяц"
+            'month' => "месяц",
         ];
     }
 }

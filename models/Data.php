@@ -4,7 +4,7 @@ namespace app\models;
 
 use Tlr\Tables\Elements\Table;
 
-class Data extends \yii\base\BaseObject 
+class Data extends \yii\base\BaseObject
 {
     public $months = [ 
         0 => 'Январь',
@@ -54,20 +54,20 @@ class Data extends \yii\base\BaseObject
     public function makeTable($type)
     {
         $table = new Table;
-        $table -> class('table table-bordered table-striped');
-            $row = $table->header()->row();
-            $row -> cell('Месяц');
-            foreach ($this -> months as $monthItem){
-                 $row -> cell($monthItem); 
-            }
-            foreach ($this -> tonnages as $keyTonnage => $tonnageItem){
-                $row = $table->body()->row(); 
-                $row -> cell($tonnageItem);
-                    for($i = 0; $i < 6; $i++){
-                        $row -> cell($this -> rated[$type][$keyTonnage][$i]);
-                    }
-            }
-        return $table -> render() ;
+        $table->class('table table-bordered table-striped');
+        $row = $table->header()->row();
+        $row->cell('Месяц');
+        foreach ($this->months as $monthItem) {
+             $row->cell($monthItem);
+        }
+        foreach ($this->tonnages as $keyTonnage => $tonnageItem) {
+            $row = $table->body()->row();
+            $row->cell($tonnageItem);
+                for($i = 0; $i < 6; $i++) {
+                    $row->cell($this->rated[$type][$keyTonnage][$i]);
+                }
+        }
+        return $table->render() ;
     }
 
     /**

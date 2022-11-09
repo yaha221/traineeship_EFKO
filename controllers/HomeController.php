@@ -46,7 +46,7 @@ class HomeController extends Controller
             $message =  $data->viewResult($result, $type, $table);
             Yii::$app->response->format = Response::FORMAT_JSON;
             $feedback = [
-                'message' => $message
+                'message' => $message,
             ];
             return $feedback;
         }
