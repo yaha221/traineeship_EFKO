@@ -47,11 +47,12 @@ class Data extends \yii\base\BaseObject
 
     /**
      * Генерация таблицы
-     * 
      * @param int $type номер типа по которому быдет строиться таблица
+     * 
      * @return string возвращает сгенерированную разметку таблицы html в виде строки
      */
-    public function makeTable($type){
+    public function makeTable($type)
+    {
         $table = new Table;
         $table -> class('table table-bordered table-striped');
             $row = $table->header()->row();
@@ -71,13 +72,14 @@ class Data extends \yii\base\BaseObject
 
     /**
      * Отображение данных, полученных из формы
-     * 
      * @param int $result начальная стоимость перевозки
      * @param string $type тип перевозимого товара
      * @param string $table таблица, сгенерированная по типу
+     * 
      * @return string возвращает html разметку, отпровляемую на форму
      */
-    public function viewResult($result, $type, $table){
+    public function viewResult($result, $type, $table)
+    {
         $textResult = "<p> Начальная стоимость: $result </p>";
         $typeHeader = "<h3> $type </h3>";
         return $textResult . $typeHeader . $table;

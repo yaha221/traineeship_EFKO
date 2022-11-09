@@ -17,7 +17,8 @@ class CalculatedForm extends Model
     /**
      * @return array правила валидации
      */
-    public function rules(){
+    public function rules()
+    {
         return[
             [['type','tonnage','month',],'required','message' => 'Введите в {attribute} что-нибудь',],
             [['type','tonnage','month',],'safe',],
@@ -27,7 +28,8 @@ class CalculatedForm extends Model
     /**
      * @return array изменнённые атрибуты labels
      */
-    public function attributeLabels(){
+    public function attributeLabels()
+    {
         return[
             'type' => "тип",
             'tonnage' => "тоннаж",
