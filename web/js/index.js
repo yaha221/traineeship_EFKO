@@ -6,7 +6,7 @@
             type: 'POST',
             data: data,
             success: function(data){
-                $('#feedback').html(data.message);
+                $('#feedback').html(data);
                 form.children('.has-success').removeClass('has-success');
                 form[0].reset();
             },

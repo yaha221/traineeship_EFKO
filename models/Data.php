@@ -43,45 +43,4 @@ class Data extends \yii\base\BaseObject
         75 => [ 136, 137, 141, 137, 131, 143,],
         100 => [ 138, 142, 117, 124, 147, 112,],
     ]];
-
-
-    /**
-     * Генерация таблицы
-     * @param int $type номер типа по которому быдет строиться таблица
-     * 
-     * @return string возвращает сгенерированную разметку таблицы html в виде строки
-     */
-    public function makeTable($type)
-    {
-        $table = new Table;
-        $table->class('table table-bordered table-striped');
-        $row = $table->header()->row();
-        $row->cell('Месяц');
-        foreach ($this->months as $monthItem) {
-             $row->cell($monthItem);
-        }
-        foreach ($this->tonnages as $keyTonnage => $tonnageItem) {
-            $row = $table->body()->row();
-            $row->cell($tonnageItem);
-                for($i = 0; $i < 6; $i++) {
-                    $row->cell($this->rated[$type][$keyTonnage][$i]);
-                }
-        }
-        return $table->render() ;
-    }
-
-    /**
-     * Отображение данных, полученных из формы
-     * @param int $result начальная стоимость перевозки
-     * @param string $type тип перевозимого товара
-     * @param string $table таблица, сгенерированная по типу
-     * 
-     * @return string возвращает html разметку, отпровляемую на форму
-     */
-    public function viewResult($result, $type, $table)
-    {
-        $textResult = "<p> Начальная стоимость: $result </p>";
-        $typeHeader = "<h3> $type </h3>";
-        return $textResult . $typeHeader . $table;
-    }
 }
