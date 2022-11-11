@@ -2,8 +2,6 @@
 
 namespace app\models;
 
-use Tlr\Tables\Elements\Table;
-
 class Data extends \yii\base\BaseObject
 {
     public $months = [ 
