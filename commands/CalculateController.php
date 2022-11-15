@@ -39,9 +39,9 @@ class CalculateController extends Controller
     public function actionIndex()
     {
         $data = new Data;
-        $typeKey=array_search($this->type,$data->types);
-        $tonnageKey=array_search($this->tonnage,$data->tonnages);
-        $monthKey=array_search($this->month,$data->months);
+        $typeKey=array_search(mb_convert_case(mb_strtolower($this->type, 'UTF-8'), MB_CASE_TITLE, 'UTF-8'), $data->types);
+        $tonnageKey=array_search($this->tonnage, $data->tonnages);
+        $monthKey=array_search(mb_convert_case(mb_strtolower($this->month, 'UTF-8'), MB_CASE_TITLE, 'UTF-8'), $data->months);
         if(!$this->isAllOptionsInsert() || !$this->isAllItemFound($monthKey, $typeKey, $tonnageKey)) {
             return ExitCode::IOERR;
         }
