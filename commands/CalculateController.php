@@ -5,6 +5,7 @@ namespace app\commands;
 use yii\console\Controller;
 use yii\console\ExitCode;
 use app\models\Data;
+use LucidFrame\Console\ConsoleTable;
 
 /**
  * CalculateController команда работы приложения в консоли
@@ -120,26 +121,18 @@ class CalculateController extends Controller
      */
     private function renderTable($data, $typeKey)
     {
-        echo "\033[32m ╔═════╦════════╦═════════╦════════╦══════════╦═════════╦════════╗" . PHP_EOL;
-        echo "\033[32m ║ м\т ║ Январь ║ Февраль ║ Август ║ Сентябрь ║ Октябрь ║ Ноябрь ║" . PHP_EOL;
-        foreach($data->tonnages as $keyTonnage => $tonnageItem) {
-            echo "\033[32m ╠═════╬════════╬═════════╬════════╬══════════╬═════════╬════════╣" . PHP_EOL;
-            if ($keyTonnage !== 100) {
-                echo "\033[32m ║ " . $tonnageItem . "  ║"; 
-            }
-            if ($keyTonnage === 100) {
-                echo "\033[32m ║ " . $tonnageItem . " ║"; 
-            }
-            for ($i=0; $i < 6; $i++) { 
-                if ($i !== 2 && $i !== 5) {
-                    echo "  " . $data->rated[$typeKey][$keyTonnage][$i] . "   ║ ";
-                }
-                if ($i === 2 || $i === 5) {
-                    echo "  " . $data->rated[$typeKey][$keyTonnage][$i] . "  ║  ";
-                }
-            }
-            echo PHP_EOL;
+        $table = new ConsoleTable();
+        $table->addHeader('м\т');
+        foreach ($data->months as $month) {
+            $table->addHeader($month);
         }
-        echo "\033[32m ╚═════╩════════╩═════════╩════════╩══════════╩═════════╩════════╝" . PHP_EOL;
+        foreach ($data->tonnages as $keyTonnage => $tonnage) {
+            $table->addRow()->addColumn($tonnage);
+            for ($i=0; $i < 6; $i++) { 
+                $table->addColumn($data->rated[$typeKey][$keyTonnage][$i]);
+            }
+        }
+        $table->display();
+        
     }
 }
