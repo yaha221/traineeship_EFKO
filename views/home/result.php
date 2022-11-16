@@ -8,13 +8,13 @@
             $table->class('table table-bordered table-striped');
             $row = $table->header()->row();
             $row->cell('Месяц');
-            foreach ($data->months as $monthItem){
+            foreach ($data->months as $monthItem) {
                  $row->cell($monthItem); 
             }
-            foreach ($data->tonnages as $keyTonnage => $tonnageItem){
+            foreach ($data->tonnages as $keyTonnage => $tonnageItem) {
                 $row = $table->body()->row(); 
                 $row->cell($tonnageItem);
-                    for($i = 0; $i < 6; $i++){
+                    for($i = 0; $i < 6; $i++) {
                         $row->cell($data->rated[$calculatedForm->type][$keyTonnage][$i]);
                     }
             } ?>
