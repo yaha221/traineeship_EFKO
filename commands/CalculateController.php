@@ -33,7 +33,7 @@ class CalculateController extends Controller
         return[
             'month',
             'type',
-            'tonnage'
+            'tonnage',
         ];
     }
 
@@ -43,7 +43,7 @@ class CalculateController extends Controller
         $typeKey=array_search(mb_convert_case(mb_strtolower($this->type, 'UTF-8'), MB_CASE_TITLE, 'UTF-8'), $data->types);
         $tonnageKey=array_search($this->tonnage, $data->tonnages);
         $monthKey=array_search(mb_convert_case(mb_strtolower($this->month, 'UTF-8'), MB_CASE_TITLE, 'UTF-8'), $data->months);
-        if(!$this->isAllOptionsInsert() || !$this->isAllItemFound($monthKey, $typeKey, $tonnageKey)) {
+        if($this->isAllOptionsInsert() === false || $this->isAllItemFound($monthKey, $typeKey, $tonnageKey) === false) {
             return ExitCode::IOERR;
         }
         echo "\033[36m Калькулятор стоимости сырья" . PHP_EOL;
@@ -66,19 +66,19 @@ class CalculateController extends Controller
      */
     private function isAllItemFound($monthKey, $typeKey, $tonnageKey)
     {
-        if (!$monthKey && $monthKey !== 0) {
+        if ($monthKey === null && $monthKey !== 0) {
             echo "\033[31m Выполнение команды завершено с ошибкой" . PHP_EOL;
             echo "\033[31m Не найден прайс для --month = " . $this->month . PHP_EOL;
             echo "\033[31m Проверьте корректность введённых данных" . PHP_EOL;
             return false;
         }
-        if (!$typeKey) {
+        if ($typeKey === null) {
             echo "\033[31m Выполнение команды завершено с ошибкой" . PHP_EOL;
             echo "\033[31m Не найден прайс для --type = " . $this->type . PHP_EOL;
             echo "\033[31m Проверьте корректность введённых данных" . PHP_EOL;
             return false;
         }
-        if (!$tonnageKey) {
+        if ($tonnageKey === null) {
             echo "\033[31m Выполнение команды завершено с ошибкой" . PHP_EOL;
             echo "\033[31m Не найден прайс для --tonnage = " . $this->tonnage . PHP_EOL;
             echo "\033[31m Проверьте корректность введённых данных" . PHP_EOL;
@@ -128,11 +128,10 @@ class CalculateController extends Controller
         }
         foreach ($data->tonnages as $keyTonnage => $tonnage) {
             $table->addRow()->addColumn($tonnage);
-            for ($i=0; $i < 6; $i++) { 
+            for ($i=0; $i < 6; $i++) {
                 $table->addColumn($data->rated[$typeKey][$keyTonnage][$i]);
             }
         }
         $table->display();
-        
     }
 }
