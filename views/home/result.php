@@ -14,7 +14,7 @@
             foreach ($data->tonnages as $keyTonnage => $tonnageItem) {
                 $row = $table->body()->row();
                 $row->cell($tonnageItem);
-                    for($i = 0; $i < 6; $i++) {
+                    for($i = 1; $i <= 6; $i++) {
                         $row->cell($data->rated[$calculatedForm->type][$keyTonnage][$i]);
                     }
             } ?>

@@ -128,7 +128,7 @@ class CalculateController extends Controller
         }
         foreach ($data->tonnages as $keyTonnage => $tonnage) {
             $table->addRow()->addColumn($tonnage);
-            for ($i=0; $i < 6; $i++) {
+            for ($i=1; $i <= 6; $i++) {
                 $table->addColumn($data->rated[$typeKey][$keyTonnage][$i]);
             }
         }
