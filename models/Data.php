@@ -18,10 +18,10 @@ class Data extends \yii\base\BaseObject
         3 => 'Шрот',
     ];
     public $tonnages = [
-        25 => 25,
-        50 => 50,
-        75 => 75,
-        100 => 100,
+        1 => 25,
+        2 => 50,
+        3 => 75,
+        4 => 100,
     ];
     public $rated =[
     1 => [
