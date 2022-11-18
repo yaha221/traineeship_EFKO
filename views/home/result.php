@@ -14,8 +14,8 @@
             foreach ($data->tonnages as $keyTonnage => $tonnageItem) {
                 $row = $table->body()->row();
                 $row->cell($tonnageItem);
-                    for($i = 1; $i <= 6; $i++) {
-                        $row->cell($data->rated[$calculatedForm->type][$keyTonnage][$i]);
+                    foreach($data->months as $keyMonth => $month) {
+                        $row->cell($data->rated[$calculatedForm->type][$keyTonnage][$keyMonth]);
                     }
             } ?>
             <?= $table->render() ?>
