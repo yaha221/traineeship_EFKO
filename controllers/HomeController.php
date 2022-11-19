@@ -41,7 +41,7 @@ class HomeController extends Controller
         $data = new Data();
         if($calculatedForm->load(Yii::$app->request->post()) && Yii::$app->request->isAjax) {
             return $this->renderAjax('result', [
-                'calculatedForm' => $calculatedForm ,
+                'calculatedForm' => $calculatedForm,
                 'data' => $data,
             ]);
         }

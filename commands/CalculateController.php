@@ -4,6 +4,7 @@ namespace app\commands;
 
 use yii\console\Controller;
 use yii\console\ExitCode;
+use yii\helpers\Console;
 use app\models\Data;
 use LucidFrame\Console\ConsoleTable;
 
@@ -22,6 +23,26 @@ class CalculateController extends Controller
     public $type;
     public $tonnage;
 
+    private $monthKey;
+    private $tonnageKey;
+    private $typeKey;
+    private $keyMap = [];
+    private $optionsMap = [];
+
+    /**
+     * Инициализация карты опций
+     * 
+     * @return string[]
+     */
+    public function init():void
+    {
+        $this->optionsMap = [
+            'month' => 'Месяц',
+            'tonnage' => 'Тоннаж',
+            'type' => 'Тип сырья',
+        ];
+    }
+
     /**
      * Переопределение встроенной функции options 
      * @param $actionID - the action id of the current request
@@ -30,96 +51,107 @@ class CalculateController extends Controller
      */
     public function options($actionID)
     {
-        return[
-            'month',
-            'type',
-            'tonnage'
-        ];
+        return array_merge(parent::options($actionID), array_keys($this->optionsMap));
     }
 
+    
     public function actionIndex()
     {
         $data = new Data;
-        $typeKey=array_search(mb_convert_case(mb_strtolower($this->type, 'UTF-8'), MB_CASE_TITLE, 'UTF-8'), $data->types);
-        $tonnageKey=array_search($this->tonnage, $data->tonnages);
-        $monthKey=array_search(mb_convert_case(mb_strtolower($this->month, 'UTF-8'), MB_CASE_TITLE, 'UTF-8'), $data->months);
-        if(!$this->isAllOptionsInsert() || !$this->isAllItemFound($monthKey, $typeKey, $tonnageKey)) {
+        $this->typeKey=array_search(mb_convert_case(mb_strtolower($this->type, 'UTF-8'), MB_CASE_TITLE, 'UTF-8'), $data->types);
+        $this->tonnageKey=array_search($this->tonnage, $data->tonnages);
+        $this->monthKey=array_search(mb_convert_case(mb_strtolower($this->month, 'UTF-8'), MB_CASE_TITLE, 'UTF-8'), $data->months);
+        $this->keyMap = [
+            'typeKey' => '--type = ' . $this->type,
+            'tonnageKey' => '--tonnage = ' . $this->tonnage,
+            'monthKey' => '--month = ' . $this->month,
+        ];
+
+        try {
+            $this->validate();
+            $this->checkSearch($this->keyMap);
+        } catch (\InvalidArgumentException $e) {
+            
+            $this->stdout($e->getMessage() . PHP_EOL, Console::FG_RED);
+            
             return ExitCode::IOERR;
         }
+        
         echo "\033[36m Калькулятор стоимости сырья" . PHP_EOL;
         echo "\033[1;33m Введенные парамерты: " . PHP_EOL;
         echo "\033[1;33m Месяц - " . $this->month . PHP_EOL;
         echo "\033[1;33m Тип - " . $this->type . PHP_EOL;
         echo "\033[1;33m Тоннаж - " . $this->tonnage . PHP_EOL;
-        echo "\033[32m Результат - " . $data->rated[$typeKey][$tonnageKey][$monthKey] . PHP_EOL;
-        $this->renderTable($data, $typeKey);
-        return ExitCode::OK;
-    }
+        echo "\033[32m Результат - " . $data->rated[$this->typeKey][$this->tonnageKey][$this->monthKey] . PHP_EOL;
 
-    /**
-     * Проверка на соответствие прайсу
-     * @param $monthKey - ключ месяца
-     * @param $typeKey - ключ типа
-     * @param $tonnageKey - ключ тоннажа
-     * 
-     * @return true|false
-     */
-    private function isAllItemFound($monthKey, $typeKey, $tonnageKey)
-    {
-        if (!$monthKey && $monthKey !== 0) {
-            echo "\033[31m Выполнение команды завершено с ошибкой" . PHP_EOL;
-            echo "\033[31m Не найден прайс для --month = " . $this->month . PHP_EOL;
-            echo "\033[31m Проверьте корректность введённых данных" . PHP_EOL;
-            return false;
-        }
-        if (!$typeKey) {
-            echo "\033[31m Выполнение команды завершено с ошибкой" . PHP_EOL;
-            echo "\033[31m Не найден прайс для --type = " . $this->type . PHP_EOL;
-            echo "\033[31m Проверьте корректность введённых данных" . PHP_EOL;
-            return false;
-        }
-        if (!$tonnageKey) {
-            echo "\033[31m Выполнение команды завершено с ошибкой" . PHP_EOL;
-            echo "\033[31m Не найден прайс для --tonnage = " . $this->tonnage . PHP_EOL;
-            echo "\033[31m Проверьте корректность введённых данных" . PHP_EOL;
-            return false;
-        }
-        return true;
+        $this->renderTable($data);
+        return ExitCode::OK;
     }
     
     /**
-     * Проверка на ввод всех опций(значений)
-     * 
-     * @return true|false
+     * Проверка на соответствие прайсу
      */
-    private function isAllOptionsInsert()
+    private function checkSearch():void
     {
-        if ($this->month === null) {
-            echo "\033[31m Выполнение команды завершено с ошибкой" . PHP_EOL;
-            echo "\033[31m Необходимо ввести месяц" . PHP_EOL;
-            return false;
+        $errorLines = [];
+
+        foreach ($this->keyMap as $key => $value) {
+            if ($this->{$key} !== false) {
+                continue;
+            }
+
+            $errorLines[] = 'Не найден прайс для ' . $value;
         }
-        if ($this->type === null) {
-            echo "\033[31m Выполнение команды завершено с ошибкой" . PHP_EOL;
-            echo "\033[31m Необходимо ввести тип" . PHP_EOL;
-            return false;
+
+        if (empty($errorLines) === true) {
+            return;
         }
-        if ($this->tonnage === null) {
-            echo "\033[31m Выполнение команды завершено с ошибкой" . PHP_EOL;
-            echo "\033[31m Необходимо ввести тоннаж" . PHP_EOL;
-            return false;
+
+        array_unshift($errorLines, 'Выполнение команды завершено с ошибкой');
+    
+        foreach ($errorLines as $line) {
+            $this->stdout($line . PHP_EOL, Console::FG_RED);
         }
-        return true;
+
+        throw new \InvalidArgumentException('Проверьте корректность введённых данных');
+    }
+
+
+    /**
+     * Проверка на ввод всех опций(значений)
+     */
+    private function validate(): void
+    {
+        $errorLines = [];
+
+        foreach ($this->optionsMap as $key => $value) {
+            if ($this->{$key} !== null) {
+                continue;
+            }
+
+            $errorLines[] = 'Необходимо ввести ' . $value;
+        }
+
+        if (empty($errorLines) === true) {
+            return;
+        }
+
+        array_unshift($errorLines, 'Выполнение команды завершено с ошибкой');
+
+        foreach($errorLines as $line) {
+            $this->stdout($line . PHP_EOL, Console::FG_RED);
+        }
+
+        throw new \InvalidArgumentException();
     }
 
     /**
      * Отрисовка таблицы в консоли
      * @param $data - прайс для отрисовки
-     * @param $typeKey - тип по которому будет отрисовываться таблица
      * 
      * @return null
      */
-    private function renderTable($data, $typeKey)
+    private function renderTable($data)
     {
         $table = new ConsoleTable();
         $table->addHeader('м\т');
@@ -128,11 +160,10 @@ class CalculateController extends Controller
         }
         foreach ($data->tonnages as $keyTonnage => $tonnage) {
             $table->addRow()->addColumn($tonnage);
-            for ($i=0; $i < 6; $i++) { 
-                $table->addColumn($data->rated[$typeKey][$keyTonnage][$i]);
+            foreach($data->months as $keyMonth => $month) {
+                $table->addColumn($data->rated[$this->typeKey][$keyTonnage][$keyMonth]);
             }
         }
         $table->display();
-        
     }
 }
