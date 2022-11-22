@@ -14,11 +14,11 @@
              ],
         ]); ?>
         
-        <?= $form->field($calculatedForm, 'month')->dropDownList($data->months,['prompt' => 'Выберите месяц',])->label('Месяц') ?>
+        <?= $form->field($calculatedForm, 'month')->dropDownList($months,['prompt' => 'Выберите месяц',])->label('Месяц') ?>
         
-        <?= $form->field($calculatedForm, 'tonnage')->dropDownList($data->tonnages,['prompt' => 'Выберите тоннаж',])->label('Тоннаж') ?>
+        <?= $form->field($calculatedForm, 'tonnage')->dropDownList($tonnages,['prompt' => 'Выберите тоннаж',])->label('Тоннаж') ?>
         
-        <?= $form->field($calculatedForm, 'type')->dropDownList($data->types,['prompt' => 'Выберите тип',])->label('Тип') ?>
+        <?= $form->field($calculatedForm, 'type')->dropDownList($types,['prompt' => 'Выберите тип',])->label('Тип') ?>
         
         <div class="form-group">
             <?= Html::submitButton('Расчитать', ['class' => 'btn btn-primary']) ?>
