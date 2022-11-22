@@ -5,7 +5,7 @@ namespace app\commands;
 use yii\console\Controller;
 use yii\console\ExitCode;
 use yii\helpers\Console;
-use app\models\Data;
+use app\models\repositories\DataRepository;
 use LucidFrame\Console\ConsoleTable;
 
 /**
@@ -57,18 +57,28 @@ class CalculateController extends Controller
     
     public function actionIndex()
     {
-        $data = new Data;
-        $this->typeKey=array_search(mb_convert_case(mb_strtolower($this->type, 'UTF-8'), MB_CASE_TITLE, 'UTF-8'), $data->types);
-        $this->tonnageKey=array_search($this->tonnage, $data->tonnages);
-        $this->monthKey=array_search(mb_convert_case(mb_strtolower($this->month, 'UTF-8'), MB_CASE_TITLE, 'UTF-8'), $data->months);
+        try {
+            $this->validate();
+        } catch (\InvalidArgumentException $e) {
+            
+            $this->stdout($e->getMessage() . PHP_EOL, Console::FG_RED);
+            
+            return ExitCode::IOERR;
+        }
+
+        $repository = new DataRepository();
+        $typeName = mb_convert_case(mb_strtolower($this->type, 'UTF-8'), MB_CASE_TITLE, 'UTF-8');
+        $this->typeKey = $repository->findTypeByName($typeName);
+        $this->tonnageKey=$repository->findTonnageByValue($this->tonnage);
+        $monthName = mb_convert_case(mb_strtolower($this->month, 'UTF-8'), MB_CASE_TITLE, 'UTF-8');
+        $this->monthKey = $repository->findMonthByName($monthName);
         $this->keyMap = [
             'typeKey' => '--type = ' . $this->type,
             'tonnageKey' => '--tonnage = ' . $this->tonnage,
             'monthKey' => '--month = ' . $this->month,
         ];
-
+        
         try {
-            $this->validate();
             $this->checkSearch($this->keyMap);
         } catch (\InvalidArgumentException $e) {
             
@@ -77,14 +87,23 @@ class CalculateController extends Controller
             return ExitCode::IOERR;
         }
         
+        $costs = $repository->findCostAll();
+        $costData = $repository->findCostOneByParams($this->monthKey['id'], $this->tonnageKey['id'], $this->typeKey['id']);
+
+        $costTable = [];
+
+        foreach ($costs as $item) {
+            $costTable[$item['type_id']][$item['tonnage_id']][$item['month_id']] = $item['value'];
+        }
+
         echo "\033[36m Калькулятор стоимости сырья" . PHP_EOL;
         echo "\033[1;33m Введенные парамерты: " . PHP_EOL;
         echo "\033[1;33m Месяц - " . $this->month . PHP_EOL;
         echo "\033[1;33m Тип - " . $this->type . PHP_EOL;
         echo "\033[1;33m Тоннаж - " . $this->tonnage . PHP_EOL;
-        echo "\033[32m Результат - " . $data->rated[$this->typeKey][$this->tonnageKey][$this->monthKey] . PHP_EOL;
+        echo "\033[32m Результат - " . $costData['value'] . PHP_EOL;
 
-        $this->renderTable($data);
+        $this->renderTable($repository->findMonths(), $repository->findTonnages(), $costTable);
         return ExitCode::OK;
     }
     
@@ -151,17 +170,17 @@ class CalculateController extends Controller
      * 
      * @return null
      */
-    private function renderTable($data)
+    private function renderTable($months,$tonnages,$costTable)
     {
         $table = new ConsoleTable();
         $table->addHeader('м\т');
-        foreach ($data->months as $month) {
+        foreach ($months as $month) {
             $table->addHeader($month);
         }
-        foreach ($data->tonnages as $keyTonnage => $tonnage) {
+        foreach ($tonnages as $keyTonnage => $tonnage) {
             $table->addRow()->addColumn($tonnage);
-            foreach($data->months as $keyMonth => $month) {
-                $table->addColumn($data->rated[$this->typeKey][$keyTonnage][$keyMonth]);
+            foreach($months as $keyMonth => $month) {
+                $table->addColumn($costTable[$this->typeKey['id']][$keyTonnage][$keyMonth]);
             }
         }
         $table->display();
