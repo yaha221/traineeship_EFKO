@@ -43,7 +43,7 @@ class HomeController extends Controller
      */
     public function actionFeedback()
     {
-        if (!Yii::$app->request->isAjax) {
+        if (Yii::$app->request->isAjax === false) {
             return $this->redirect('/');
         }
 
@@ -51,7 +51,7 @@ class HomeController extends Controller
 
         $calculatedForm  = new CalculatedForm();
 
-        if (!$calculatedForm->load(Yii::$app->request->post()) || !$calculatedForm->validate()) {
+        if ($calculatedForm->load(Yii::$app->request->post()) === false || $calculatedForm->validate() === false) {
             return $this->redirect('/');
         }
 
