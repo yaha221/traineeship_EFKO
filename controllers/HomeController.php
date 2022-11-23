@@ -7,7 +7,7 @@ use yii\web\Controller;
 use yii\bootstrap\ActiveForm;
 use yii\web\Response;
 use app\models\CalculatedForm;
-use app\models\Data;
+use app\models\repositories\DataRepository;
 
 class HomeController extends Controller
 {
@@ -19,14 +19,20 @@ class HomeController extends Controller
     public function actionIndex()
     {
         $calculatedForm  = new CalculatedForm();
-        $data = new Data();
+        
+        $repository = new DataRepository();
+        $months = $repository->findMonths();
+        $tonnages = $repository->findTonnages();
+        $types = $repository->findTypes();
         if (Yii::$app->request->isAjax && $calculatedForm->load(Yii::$app->request->post())) {
             Yii::$app->response->format = Response::FORMAT_JSON;
             return ActiveForm::validate($calculatedForm);
         }
         return $this->render('index', [
             'calculatedForm' => $calculatedForm ,
-            'data' => $data,
+            'months' => $months,
+            'tonnages' => $tonnages,
+            'types' => $types,
         ]);
     }
 
@@ -37,13 +43,47 @@ class HomeController extends Controller
      */
     public function actionFeedback()
     {
-        $calculatedForm  = new CalculatedForm();
-        $data = new Data();
-        if($calculatedForm->load(Yii::$app->request->post()) && Yii::$app->request->isAjax) {
-            return $this->renderAjax('result', [
-                'calculatedForm' => $calculatedForm,
-                'data' => $data,
-            ]);
+        if (Yii::$app->request->isAjax === false) {
+            return $this->redirect('/');
         }
+
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $calculatedForm  = new CalculatedForm();
+
+        if ($calculatedForm->load(Yii::$app->request->post()) === false || $calculatedForm->validate() === false) {
+            return $this->redirect('/');
+        }
+
+        $repository = new DataRepository();
+
+        $month = $repository->findMonthById((int) $calculatedForm->month);
+        $tonnage = $repository->findTonnageById((int) $calculatedForm->tonnage);
+        $type = $repository->findTypeById((int) $calculatedForm->type);
+
+        $costs = $repository->findCostAll();
+        $costData = $repository->findCostOneByParams($month['id'], $tonnage['id'], $type['id']);
+
+        $costTable = [];
+
+        foreach ($costs as $item) {
+            $costTable[$item['type_id']][$item['tonnage_id']][$item['month_id']] = $item['value'];
+        }
+
+        return $this->renderAjax('result', [
+            'calculatedForm' => $calculatedForm,
+            'months' => $repository->findMonths(),
+            'tonnages' => $repository->findTonnages(),
+            'types' => $repository->findTypes(),
+
+            'typeData' => $type,
+            'monthData' => $month,
+            'tonnageData' => $tonnage,
+
+            'costTable' => $costTable,
+            'typeKey' => $type['id'],
+
+            'costValue' => $costData['value'],
+        ]);
     }
 }
