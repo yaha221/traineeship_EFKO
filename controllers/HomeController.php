@@ -6,11 +6,50 @@ use Yii;
 use yii\web\Controller;
 use yii\bootstrap\ActiveForm;
 use yii\web\Response;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use app\models\CalculatedForm;
+use app\models\LoginForm;
+use app\models\SignupForm;
 use app\models\repositories\DataRepository;
+use app\models\User;
 
 class HomeController extends Controller
 {
+
+    /**
+     * Распределние доступа
+     * 
+     * @return array
+     */
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['logout', 'signup'],
+                'rules' => [
+                    [
+                        'actions' => ['signup'],
+                        'allow' => true,
+                        'roles' => ['?'],
+                    ],
+                    [
+                        'actions' => ['logout'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'logout' => ['post'],
+                ],
+            ],
+        ];
+    }
+
     /**
      * Отображение домашней страницы и ajax валидация формы
      * 
@@ -33,6 +72,68 @@ class HomeController extends Controller
             'months' => $months,
             'tonnages' => $tonnages,
             'types' => $types,
+        ]);
+    }
+
+    /**
+     * Отображение страницы регистрации
+     * 
+     * @return Respons|string
+     */
+    public function actionSignup()
+    {
+        if (Yii::$app->user->isGuest === false) {
+            return $this->redirect('/');
+        }
+
+        $model = new SignupForm();
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $user = new User();
+            $user->username = $model->username;
+            $user->password = Yii::$app->security->generatePasswordHash($model->password);
+
+            if ($user->save()) {
+                Yii::$app->user->login($user);
+                return $this->redirect('/');
+            }
+        }
+        return $this->render('signup', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Обработка выхода пользователя
+     * 
+     * @return Respons
+     */
+    public function actionLogout()
+    {
+        Yii::$app->user->logout();
+
+        return $this->redirect('/');
+    }
+
+    /**
+     * Отображение страницы входа
+     * 
+     * @return Respons|string
+     */
+    public function actionLogin()
+    {
+        if (Yii::$app->user->isGuest === false) {
+            return $this->redirect('/');
+        }
+
+        $model = new LoginForm();
+        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+            return $this->redirect('/');
+        }
+
+        $model->password = '';
+        return $this->render('login', [
+            'model' => $model,
         ]);
     }
 
