@@ -6,6 +6,7 @@
 use app\widgets\Alert;
 use yii\helpers\Html;
 use yii\bootstrap\NavBar;
+use yii\bootstrap\Nav;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
 
@@ -28,10 +29,28 @@ AppAsset::register($this);
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => Yii::$app->name,
+        'brandLabel' => 'Калькулятор',
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-dark navbar-expand-sm bg-dark navbar-fixed-top',
+        ],
+    ]);
+    echo Nav::widget([
+        'options' => ['class' => 'navbar-nav navbar-right '],
+        'items' => [
+            ['label' => 'Регистрация', 'url' => ['/home/signup'], 'visible' => Yii::$app->user->isGuest],
+            Yii::$app->user->isGuest ? (
+                ['label' => 'Вход', 'url' => ['/home/login']]
+            ) : (
+                '<li>'
+                . Html::beginForm(['/home/logout'], 'post')
+                . Html::submitButton(
+                    'Выход (' . Yii::$app->user->identity->username . ')',
+                    ['class' => 'btn btn-outline-warning logout']
+                )
+                . Html::endForm()
+                . '</li>'
+            )
         ],
     ]);
     NavBar::end();
@@ -48,8 +67,8 @@ AppAsset::register($this);
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; My Company <?= date('Y') ?></p>
-        <p class="pull-right"><?= Yii::powered() ?></p>
+        <p class="pull-left"> Калькулятор стоимости поставки зерна <?= date('Y') ?></p>
+        <p class="pull-right"> Степанюк Антон Андреевич</p>
     </div>
 </footer>
 
