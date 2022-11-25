@@ -76,68 +76,6 @@ class HomeController extends Controller
     }
 
     /**
-     * Отображение страницы регистрации
-     * 
-     * @return Respons|string
-     */
-    public function actionSignup()
-    {
-        if (Yii::$app->user->isGuest === false) {
-            return $this->redirect('/');
-        }
-
-        $model = new SignupForm();
-
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            $user = new User();
-            $user->username = $model->username;
-            $user->password = Yii::$app->security->generatePasswordHash($model->password);
-
-            if ($user->save()) {
-                Yii::$app->user->login($user);
-                return $this->redirect('/');
-            }
-        }
-        return $this->render('signup', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Обработка выхода пользователя
-     * 
-     * @return Respons
-     */
-    public function actionLogout()
-    {
-        Yii::$app->user->logout();
-
-        return $this->redirect('/');
-    }
-
-    /**
-     * Отображение страницы входа
-     * 
-     * @return Respons|string
-     */
-    public function actionLogin()
-    {
-        if (Yii::$app->user->isGuest === false) {
-            return $this->redirect('/');
-        }
-
-        $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->redirect('/');
-        }
-
-        $model->password = '';
-        return $this->render('login', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
      * Формирует ответ на ajax запрос
      * 
      * @return string

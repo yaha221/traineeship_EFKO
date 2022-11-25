@@ -22,8 +22,8 @@ $config = [
             'class' => 'yii\caching\FileCache',
         ],
         'user' => [
-            'identityClass' => 'app\models\User',
-            'enableAutoLogin' => true,
+            'class' => 'nkostadinov\user\components\User',
+            'requireUsername' => true,
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
@@ -44,6 +44,13 @@ $config = [
                 ],
             ],
         ],
+        'i18n' => [
+            'translations' => [
+                '*' => [
+                    'class' => 'yii\i18n\PhpMessageSource',
+                ],
+            ],
+        ],
         'db' => $db,
         
         'urlManager' => [
@@ -54,6 +61,11 @@ $config = [
             ],
         ],
         
+    ],
+    'modules' => [
+        'user' => [
+            'class' => 'nkostadinov\user\Module',
+        ],
     ],
     'params' => $params,
 ];

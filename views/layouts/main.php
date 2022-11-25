@@ -38,12 +38,13 @@ AppAsset::register($this);
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right '],
         'items' => [
-            ['label' => 'Регистрация', 'url' => ['/home/signup'], 'visible' => Yii::$app->user->isGuest],
+            ['label' => 'Регистрация', 'url' => ['/user/registration/signup'], 'visible' => Yii::$app->user->isGuest],
+            ['label' => 'Профиль', 'url' => ['user/profile/view'], 'visible' => Yii::$app->user->isGuest === false],
             Yii::$app->user->isGuest ? (
-                ['label' => 'Вход', 'url' => ['/home/login']]
+                ['label' => 'Вход', 'url' => ['/user/security/login']]
             ) : (
                 '<li>'
-                . Html::beginForm(['/home/logout'], 'post')
+                . Html::beginForm(['/user/security/logout'], 'post')
                 . Html::submitButton(
                     'Выход (' . Yii::$app->user->identity->username . ')',
                     ['class' => 'btn btn-outline-warning logout']
@@ -68,7 +69,12 @@ AppAsset::register($this);
 <footer class="footer">
     <div class="container">
         <p class="pull-left"> Калькулятор стоимости поставки зерна <?= date('Y') ?></p>
-        <p class="pull-right"> Степанюк Антон Андреевич</p>
+        <p class="pull-right">
+            <?=
+            Yii::$app->user->isGuest ? ('Степанюк Антон Андреевич') 
+            : (Yii::$app->user->identity->username)
+            ?>
+        </p>
     </div>
 </footer>
 
