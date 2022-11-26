@@ -25,6 +25,9 @@ $config = [
             'class' => 'nkostadinov\user\components\User',
             'requireUsername' => true,
         ],
+        'authManager' => [
+            'class' => 'yii\rbac\DbManager',
+        ],
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],

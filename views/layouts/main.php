@@ -39,7 +39,8 @@ AppAsset::register($this);
         'options' => ['class' => 'navbar-nav navbar-right '],
         'items' => [
             ['label' => 'Регистрация', 'url' => ['/user/registration/signup'], 'visible' => Yii::$app->user->isGuest],
-            ['label' => 'Профиль', 'url' => ['user/profile/view'], 'visible' => Yii::$app->user->isGuest === false],
+            ['label' => 'Администрирование', 'url' => ['/user/admin'], 'visible' => Yii::$app->user->can('admin')],
+            ['label' => 'Профиль', 'url' => ['/user/profile/view'], 'visible' => Yii::$app->user->isGuest === false],
             Yii::$app->user->isGuest ? (
                 ['label' => 'Вход', 'url' => ['/user/security/login']]
             ) : (

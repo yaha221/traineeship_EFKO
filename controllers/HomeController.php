@@ -9,10 +9,8 @@ use yii\web\Response;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use app\models\CalculatedForm;
-use app\models\LoginForm;
-use app\models\SignupForm;
 use app\models\repositories\DataRepository;
-use app\models\User;
+
 
 class HomeController extends Controller
 {
