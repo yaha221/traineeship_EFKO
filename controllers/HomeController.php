@@ -6,48 +6,14 @@ use Yii;
 use yii\web\Controller;
 use yii\bootstrap\ActiveForm;
 use yii\web\Response;
-use yii\filters\AccessControl;
-use yii\filters\VerbFilter;
+use yii\data\ActiveDataProvider;
 use app\models\CalculatedForm;
 use app\models\repositories\DataRepository;
-
+use nkostadinov\user\models\User;
+use app\models\UserRequest;
 
 class HomeController extends Controller
 {
-
-    /**
-     * Распределние доступа
-     * 
-     * @return array
-     */
-    public function behaviors()
-    {
-        return [
-            'access' => [
-                'class' => AccessControl::className(),
-                'only' => ['logout', 'signup'],
-                'rules' => [
-                    [
-                        'actions' => ['signup'],
-                        'allow' => true,
-                        'roles' => ['?'],
-                    ],
-                    [
-                        'actions' => ['logout'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
-            ],
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'logout' => ['post'],
-                ],
-            ],
-        ];
-    }
-
     /**
      * Отображение домашней страницы и ajax валидация формы
      * 
@@ -107,6 +73,34 @@ class HomeController extends Controller
             $costTable[$item['type_id']][$item['tonnage_id']][$item['month_id']] = $item['value'];
         }
 
+        foreach ($costTable as $key => $value) {
+            if ($key !== intval($type['id'])) {
+                unset($costTable[$key]);
+            }
+        }
+
+        $notWork = 'All OK';
+        if(Yii::$app->user->isGuest === false) {
+            $months = $repository->findMonths();
+            $tonnages = $repository->findTonnages();
+            $userRequest = [
+                'user_id' => Yii::$app->user->id,
+                'month' => $month['name'],
+                'type' => $type['name'],
+                'tonnage' => $tonnage['value'],
+                'result_value' => $costData['value'],
+                'result_table' => serialize($costTable[$type['id']]),
+                'months_now' => serialize($months),
+                'tonnages_now' => serialize($tonnages),
+            ];
+            $newUserRequest = new UserRequest();
+            try {
+                $newUserRequest->createUserRequest($userRequest);
+            } catch (\Exception $e) {
+                $notWork = $e->getMessage();
+            }
+        }
+
         return $this->renderAjax('result', [
             'calculatedForm' => $calculatedForm,
             'months' => $repository->findMonths(),
@@ -118,9 +112,60 @@ class HomeController extends Controller
             'tonnageData' => $tonnage,
 
             'costTable' => $costTable,
-            'typeKey' => $type['id'],
+            'type' => $type['name'],
 
             'costValue' => $costData['value'],
+            'notWork' => $notWork,
         ]);
     }
+    
+    public function actionTable($id)
+    {
+        $data = UserRequest::findOne($id);
+        $user = User::findById($data['user_id']);
+        $username = $user['username'];
+        return $this->render('table', [
+            'username' => $username,
+            'type' => $data['type'],
+            'month' => $data['month'],
+            'tonnage' => $data['tonnage'],
+            'result' => $data['result_value'],
+            'createdDate' => $data['created_at'],
+            'months' => unserialize($data['months_now']),
+            'tonnages' => unserialize($data['tonnages_now']),
+            'costTable' => unserialize($data['result_table']),
+        ]);
+    }
+
+    public function actionHistory()
+    {
+        if (Yii::$app->user->can('admin')) {
+                    $dataProvider = new ActiveDataProvider([
+            'query' => UserRequest::find(),
+            'pagination' => [
+                'pageSize' => 5,
+            ],
+        ]);
+        return $this->render('history', [
+            'dataProvider' => $dataProvider,
+        ]);
+        }
+        $dataProvider = new ActiveDataProvider([
+            'query' => UserRequest::find()
+                ->where(['user_id' => Yii::$app->user->id]),
+            'pagination' => [
+                'pageSize' => 5,
+            ],
+        ]);
+        return $this->render('history', [
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+    
+    public function actionDelete($id) 
+    {
+        UserRequest::findOne($id)->delete();
+        return $this->redirect('history');
+    }
+
 }
