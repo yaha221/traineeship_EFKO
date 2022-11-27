@@ -41,6 +41,7 @@ AppAsset::register($this);
             ['label' => 'Регистрация', 'url' => ['/user/registration/signup'], 'visible' => Yii::$app->user->isGuest],
             ['label' => 'Администрирование', 'url' => ['/user/admin'], 'visible' => Yii::$app->user->can('admin')],
             ['label' => 'Профиль', 'url' => ['/user/profile/view'], 'visible' => Yii::$app->user->isGuest === false],
+            ['label' => 'История запросов', 'url' => ['/home/history'], 'visible' => Yii::$app->user->isGuest === false],
             Yii::$app->user->isGuest ? (
                 ['label' => 'Вход', 'url' => ['/user/security/login']]
             ) : (
