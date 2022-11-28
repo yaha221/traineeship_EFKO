@@ -29,38 +29,33 @@ AppAsset::register($this);
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => 'Калькулятор',
+        'brandLabel' => 'Калькулятор доставки',
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-dark navbar-expand-sm bg-dark navbar-fixed-top',
         ],
     ]);
     echo Nav::widget([
-        'options' => ['class' => 'navbar-nav navbar-right '],
+        'options' => ['class' => 'navbar-nav navbar-right nav-pills'],
+        'dropDownCaret' => ' ',
         'items' => [
             ['label' => 'Регистрация', 'url' => ['/user/registration/signup'], 'visible' => Yii::$app->user->isGuest],
-            ['label' => 'Администрирование', 'url' => ['/user/admin'], 'visible' => Yii::$app->user->can('admin')],
-            ['label' => 'Профиль', 'url' => ['/user/profile/view'], 'visible' => Yii::$app->user->isGuest === false],
-            ['label' => 'История запросов', 'url' => ['/home/history'], 'visible' => Yii::$app->user->isGuest === false],
-            Yii::$app->user->isGuest ? (
-                ['label' => 'Вход', 'url' => ['/user/security/login']]
-            ) : (
-                '<li>'
-                . Html::beginForm(['/user/security/logout'], 'post')
-                . Html::submitButton(
-                    'Выход (' . Yii::$app->user->identity->username . ')',
-                    ['class' => 'btn btn-outline-warning logout']
-                )
-                . Html::endForm()
-                . '</li>'
+            Yii::$app->user->isGuest ? 
+            ( ['label' => 'Вход', 'url' => ['/user/security/login']] ) : (
+            ['label' => Yii::$app->user->identity->username,
+            'items' => [
+                ['label' => 'История расчётов', 'url' => ['/home/history'], 'visible' => Yii::$app->user->isGuest === false],
+                ['label' => 'Пользователи', 'url' => ['/user/admin'], 'visible' => Yii::$app->user->can('admin')],
+                ['label' => 'Выход', 'url' => ['/user/security/logout'], 'linkOptions' => ['data-method' => 'post']],
+                ],
+            ]
             )
         ],
     ]);
     NavBar::end();
-    ?>
-
-    <div class="container">
-        <?= Breadcrumbs::widget([
+?>
+        <div class="container">
+            <?= Breadcrumbs::widget([
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) ?>
         <?= Alert::widget() ?>
