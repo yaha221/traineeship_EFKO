@@ -22,7 +22,13 @@ class HomeController extends Controller
     public function actionIndex()
     {
         $calculatedForm  = new CalculatedForm();
-        
+        $username = 'Антон';
+        $is_alert = 0;
+        if (Yii::$app->user->isGuest === false) {
+            $user = User::findById(Yii::$app->user->id);
+            $username = $user['username'];
+            $is_alert = $user['is_alert'];
+        }
         $repository = new DataRepository();
         $months = $repository->findMonths();
         $tonnages = $repository->findTonnages();
@@ -36,6 +42,8 @@ class HomeController extends Controller
             'months' => $months,
             'tonnages' => $tonnages,
             'types' => $types,
+            'username' => $username,
+            'is_alert' => $is_alert,
         ]);
     }
 
@@ -162,6 +170,22 @@ class HomeController extends Controller
         ]);
     }
     
+    public function actionRemovealert()
+    {
+        if (Yii::$app->request->isAjax === false) {
+            return $this->redirect('/');
+        }
+
+        if (Yii::$app->request->post() === false) {
+            return $this->redirect('/');
+        }
+
+        $user = User::findById(Yii::$app->user->id);
+        $user->removeAlert(Yii::$app->user->id);
+
+        return;
+    }
+
     public function actionDelete($id) 
     {
         UserRequest::findOne($id)->delete();
