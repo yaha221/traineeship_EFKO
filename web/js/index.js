@@ -16,3 +16,16 @@
         });
         return false;
     })
+    $('#close-alert').on('click', function(){
+        $.ajax({
+            url: '/home/removealert',
+            type: 'POST',
+            success: function(){
+                document.getElementById('my-alert').remove();
+            },
+            error: function(){
+                alert('Произошла ошибка при отправке');
+            }
+        });
+        return false;
+    })
