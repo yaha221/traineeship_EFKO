@@ -1,5 +1,5 @@
 <?php
-    $this->title = 'История запросов';
+    $this->title = 'История расчётов';
 
     use nkostadinov\user\models\User;
     use yii\grid\GridView;
