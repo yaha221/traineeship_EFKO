@@ -32,6 +32,7 @@ class UserRequest extends ActiveRecord
             'result_value' => 'Вывод',
         ];
     }
+    
     /**
      * @inheritdoc
      */

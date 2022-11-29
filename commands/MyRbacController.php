@@ -15,12 +15,9 @@ class MyRbacController extends Controller {
         $auth->removeAll(); 
 
         $admin = $auth->createRole('admin');
-        $moderator = $auth->createRole('moderator');
         $user = $auth->createRole('user');
         
-        // запишем их в БД
         $auth->add($admin);
-        $auth->add($moderator);
         $auth->add($user);
 
         $viewAdminPage = $auth->createPermission('viewAdminPage');
@@ -29,7 +26,6 @@ class MyRbacController extends Controller {
         $logoutUser = $auth->createPermission('logoutUser');
         $logoutUser->description = 'Выход из учётной записи';
 
-        // Запишем эти разрешения в БД
         $auth->add($viewAdminPage);
         $auth->add($logoutUser);
 
@@ -39,8 +35,8 @@ class MyRbacController extends Controller {
 
         $auth->addChild($admin, $viewAdminPage);
 
-        $auth->assign($admin, 6);
+        $auth->assign($admin, 1);
 
-        $auth->assign($user, 5);
+        $auth->assign($user, 2);
     }
 }

@@ -39,7 +39,7 @@
                                                     ['title' => Yii::t('yii', 'View'), 'data-pjax' => '0']);
                         },
                         'delete' => function ($url, $model) {
-                            $customurl=Yii::$app->getUrlManager()->createUrl(['/home/delete']);
+                            $customurl=Yii::$app->getUrlManager()->createUrl(['/home/delete','id'=>$model['id']]);
                             return \yii\helpers\Html::a( '<span class="glyphicon glyphicon-trash"></span>', $customurl,
                                                     ['title' => Yii::t('yii', 'View'), 'data-pjax' => '0', 
                                                     'data-confirm' => 'Вы уверены что хотите удалить запрос?', 
