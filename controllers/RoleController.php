@@ -10,8 +10,16 @@ use nkostadinov\user\models\User;
 use yii\web\ForbiddenHttpException;
 use app\models\AssigmentUser;
 
+/**
+ * HomeController за роли пользователей
+ */
 class RoleController extends Controller
 {
+    /**
+     * Отправляет данные для формы и отрисовки таблицы ролей пользователей
+     * 
+     * @return mixed
+     */
     public function actionIndex()
     {
         if (!Yii::$app->user->can('admin')){
@@ -58,6 +66,11 @@ class RoleController extends Controller
         ]);
     }
 
+    /**
+     * Добавляет роль пользователю и обновляет страницу
+     * 
+     * @return mixed
+     */
     public function actionAppoint()
     {
         if (!Yii::$app->user->can('admin')){
@@ -80,7 +93,12 @@ class RoleController extends Controller
 
         return $this->redirect('/role');
     }
-    
+
+    /**
+     * Снимает роль с пользователя и обновляет страницу
+     * 
+     * @return mixed
+     */
     public function actionTakeoff()
     {
         if (!Yii::$app->user->can('admin')){

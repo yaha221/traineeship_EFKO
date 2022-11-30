@@ -13,12 +13,15 @@ use nkostadinov\user\models\User;
 use app\models\UserRequest;
 use yii\web\ForbiddenHttpException;
 
+/**
+ * HomeController отвечает за работу калькулятором доставки
+ */
 class HomeController extends Controller
 {
     /**
      * Отображение домашней страницы и ajax валидация формы
      * 
-     * @return string|string
+     * @return mixed
      */
     public function actionIndex()
     {
@@ -55,7 +58,7 @@ class HomeController extends Controller
     /**
      * Формирует ответ на ajax запрос
      * 
-     * @return string
+     * @return mixed
      */
     public function actionFeedback()
     {
@@ -92,7 +95,6 @@ class HomeController extends Controller
             }
         }
 
-        $notWork = 'All OK';
         if(Yii::$app->user->isGuest === false) {
             $months = $repository->findMonths();
             $tonnages = $repository->findTonnages();
@@ -110,7 +112,7 @@ class HomeController extends Controller
             try {
                 $newUserRequest->createUserRequest($userRequest);
             } catch (\Exception $e) {
-                $notWork = $e->getMessage();
+                Yii::info($e->getMessage());
             }
         }
 
@@ -128,15 +130,26 @@ class HomeController extends Controller
             'type' => $type['name'],
 
             'costValue' => $costData['value'],
-            'notWork' => $notWork,
         ]);
     }
     
+    /**
+     * Отправляет данные для отрисовки запроса из истории пользователя
+     * 
+     * @param integer $id
+     * @return mixed
+     */
     public function actionTable($id)
     {
         $data = UserRequest::findOne($id);
+        if ($data === null) {
+            return $this->redirect('/');
+        }
         $user = User::findById($data['user_id']);
         $username = $user['username'];
+        if ($user->id !== Yii::$app->user->id  && !Yii::$app->user->can('admin')){
+            return $this->redirect('/');
+        }
         return $this->render('table', [
             'username' => $username,
             'type' => $data['type'],
@@ -150,6 +163,11 @@ class HomeController extends Controller
         ]);
     }
 
+    /**
+     * Отправляет данные для отрисоки запросов пользователя
+     * 
+     * @return mixed
+     */
     public function actionHistory()
     {
         if (Yii::$app->user->can('admin')) {
@@ -175,6 +193,11 @@ class HomeController extends Controller
         ]);
     }
     
+    /**
+     * Убирает у пользователя уведомления об отслеживании его запросов
+     * 
+     * @return mixed
+     */
     public function actionRemovealert()
     {
         if (Yii::$app->request->isAjax === false) {
@@ -191,8 +214,17 @@ class HomeController extends Controller
         return;
     }
 
+    /**
+     * Удаляет запрос пользователя из истории
+     * 
+     * @param integer $id
+     * @return mixed
+     */
     public function actionDelete($id) 
     {
+        if (!\Yii::$app->user->can('admin')) {
+            throw new ForbiddenHttpException('Access denied');
+        }
         UserRequest::findOne($id)->delete();
         return $this->redirect('history');
     }

@@ -39,9 +39,8 @@ AppAsset::register($this);
         'options' => ['class' => 'navbar-nav navbar-right nav-pills'],
         'dropDownCaret' => ' ',
         'items' => [
-            ['label' => 'Регистрация', 'url' => ['/user/registration/signup'], 'visible' => Yii::$app->user->isGuest],
             Yii::$app->user->isGuest ? 
-            ( ['label' => 'Вход', 'url' => ['/user/security/login']] ) : (
+            ( ['label' => 'Войти в систему', 'url' => ['/user/security/login']] ) : (
             ['label' => Yii::$app->user->identity->username,
             'items' => [
                 ['label' => 'История расчётов', 'url' => ['/home/history'], 'visible' => Yii::$app->user->isGuest === false],

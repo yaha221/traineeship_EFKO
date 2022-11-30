@@ -2,8 +2,6 @@
 
 namespace app\models;
 
-use yii\db\Query;
-use Yii;
 use yii\db\ActiveRecord;
 
 /**
@@ -22,6 +20,9 @@ use yii\db\ActiveRecord;
  */
 class UserRequest extends ActiveRecord
 {
+    /**
+     * @return array изменнённые атрибуты labels
+     */
     public function attributeLabels()
     {
         return [
@@ -41,6 +42,11 @@ class UserRequest extends ActiveRecord
         return '{{%user_request}}';
     }
 
+    /**
+     * Добавляет в историю запросов запрос пользователя
+     * 
+     * @throws Exception возвращает ошибку
+     */
     public function createUserRequest(array $userRequest)
     {
         $newUserRequest = new UserRequest();

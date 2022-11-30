@@ -24,6 +24,9 @@ class AssigmentUser extends ActiveRecord
         return '{{%auth_assignment}}';
     }
 
+    /**
+     * @return array правила валидации
+     */
     public function rules()
     {
         return [
@@ -33,6 +36,9 @@ class AssigmentUser extends ActiveRecord
         ];
     }
 
+    /**
+     * @return array изменнённые атрибуты labels
+     */
     public function attributeLabels()
     {
         return [
@@ -41,11 +47,19 @@ class AssigmentUser extends ActiveRecord
         ];
     }
 
+    /**
+     * Получение всех пользователей и их ролей
+     * 
+     * @return array все назначенные роли
+     */
     public function getUserAssigs ()
     {
         return AssigmentUser::find()->select(['item_name','user_id'])->all();
     }
 
+    /**
+     * Добавляет пользователя и новую роль
+     */
     public function appointUserAssig ($item_name, $user_id)
     {
         $auth = Yii::$app->getAuthManager();
@@ -56,16 +70,22 @@ class AssigmentUser extends ActiveRecord
         return;
     }
 
+    /**
+     * Удаляет у пользователя роль
+     */
     public function takeoffUserAssig ($item_name, $user_id)
     {
         $auth = Yii::$app->getAuthManager();
         if ($item_name === 'admin') {
             $role = $auth->getRole('admin');
             $auth->revoke($role,$user_id);
+            return;
         }
         if ($item_name === 'user') {
             $role = $auth->getRole('user');
             $auth->revoke($role,$user_id);
+            return;
         }
+        return;
     }
 }

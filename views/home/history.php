@@ -34,14 +34,14 @@
                     ],
                     'buttons' => [
                         'view' => function ($url, $model) {
-                            $customurl=Yii::$app->getUrlManager()->createUrl(['/home/table','id'=>$model['id']]); //$model->id для AR
+                            $customurl=Yii::$app->getUrlManager()->createUrl(['/home/table','id'=>$model['id']]); 
                             return \yii\helpers\Html::a( '<span class="glyphicon glyphicon-eye-open"></span>', $customurl,
-                                                    ['title' => Yii::t('yii', 'View'), 'data-pjax' => '0']);
+                                                    ['title' => Yii::t('yii', 'Посмотреть'), 'data-pjax' => '0']);
                         },
                         'delete' => function ($url, $model) {
                             $customurl=Yii::$app->getUrlManager()->createUrl(['/home/delete','id'=>$model['id']]);
                             return \yii\helpers\Html::a( '<span class="glyphicon glyphicon-trash"></span>', $customurl,
-                                                    ['title' => Yii::t('yii', 'View'), 'data-pjax' => '0', 
+                                                    ['title' => Yii::t('yii', 'Удалить'), 'data-pjax' => '0', 
                                                     'data-confirm' => 'Вы уверены что хотите удалить запрос?', 
                                                     'data-method' => 'post']);
                         }

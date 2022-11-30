@@ -30,7 +30,7 @@ class SignupForm extends Model
             ['email', 'email'],
             ['email', 'uniqueEmail'],
             ['username', 'safe'],
-            ['username', 'match', 'pattern'=>'/^[A-zА-я-.-_\s]+$/u', 'message'=>'Только буквы'],
+            ['username', 'match', 'pattern' => '/^[A-zА-я-.]+$/u', 'message'=>'Только буквы'],
 
             ['password', 'required', 'message' => 'Введите пожалуйста {attribute}'],
             ['password', 'string', 'min' => Yii::$app->user->minPasswordLength],

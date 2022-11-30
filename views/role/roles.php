@@ -1,7 +1,6 @@
 <?php
     $this->title = 'Обновление ролей';
     use yii\helpers\Html;
-    use yii\bootstrap\Alert;
     use yii\helpers\Url;
     use yii\widgets\ActiveForm;
     use Tlr\Tables\Elements\Table;
@@ -28,8 +27,8 @@
             ]) ?>
         </div>
         <?php ActiveForm::end(); ?>
-    </div>
-    <div class="row p-5">
+</div>
+<div class="row p-5">
     <p>
     <?= $table = new Table;
     $table->class('table table-bordered table-striped');
@@ -44,4 +43,4 @@
     ?>
     <?= $table->render() ?>
     </p>
-    </div>
+</div>

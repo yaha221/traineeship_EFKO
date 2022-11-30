@@ -5,8 +5,16 @@ namespace app\models\repositories;
 use yii\db\Expression;
 use yii\db\Query;
 
+/**
+ * Набор методов для обращения к базе данных.
+*/
 class DataRepository
 {
+    /**
+     * Находит все месяца
+     * 
+     * @return array месяца
+     */
     public function findMonths(): array
     {
         $data = (new Query())->select(['*'])
@@ -22,6 +30,11 @@ class DataRepository
         return $result;
     }
 
+    /**
+     * Находит все тоннажи
+     * 
+     * @return array тоннажи
+     */
     public function findTonnages(): array
     {
         $data = (new Query())->select(['*'])
@@ -37,6 +50,11 @@ class DataRepository
         return $result;
     }
 
+    /**
+     * Находит все типы
+     * 
+     * @return array типы
+     */
     public function findTypes(): array
     {
         $data = (new Query())->select(['*'])
@@ -52,6 +70,12 @@ class DataRepository
         return $result;
     }
 
+    /**
+     * Находит месяц по номеру
+     * 
+     * @param integer $id
+     * @return array месяц
+     */
     public function findMonthById(int $id): array
     {
         return (new Query())->select(['*'])
@@ -60,6 +84,12 @@ class DataRepository
             ->one();
     }
 
+    /**
+     * Находит тоннаж по номеру
+     * 
+     * @param integer $id
+     * @return array тоннаж
+     */
     public function findTonnageById(int $id): array
     {
         return (new Query())->select(['*'])
@@ -68,6 +98,12 @@ class DataRepository
             ->one();
     }
 
+    /**
+     * Находит тип по номеру
+     * 
+     * @param integer $id
+     * @return array тип
+     */
     public function findTypeById(int $id): array
     {
         
@@ -77,6 +113,12 @@ class DataRepository
             ->one();
     }
 
+    /**
+     * Находит месяц по имени
+     * 
+     * @param string $name
+     * @return array месяц
+     */
     public function findMonthByName(string $name)
     {
         return (new Query())->select(['id'])
@@ -85,6 +127,12 @@ class DataRepository
             ->one();
     }
 
+    /**
+     * Находит тоннаж по значению
+     * 
+     * @param integer $value
+     * @return array тоннаж
+     */
     public function findTonnageByValue(int $value)
     {
         return (new Query())->select(['id'])
@@ -93,6 +141,12 @@ class DataRepository
             ->one();
     }
 
+    /**
+     * Находит тип по имени
+     * 
+     * @param string $name
+     * @return array тип
+     */
     public function findTypeByName(string $name)
     {
         return (new Query())->select(['id'])
@@ -101,6 +155,11 @@ class DataRepository
             ->one();
     }
 
+    /**
+     * Находит весь прайс
+     * 
+     * @return array прайс
+     */
     public function findCostAll(): array
     {
         return (new Query())->select([
@@ -116,6 +175,14 @@ class DataRepository
         ->all();
     }
 
+    /**
+     * Находит цену по индексам
+     * 
+     * @param integer $monthId
+     * @param integer $tonnageId
+     * @param integer $typeId
+     * @return array цену
+     */
     public function findCostOneByParams($monthId, $tonnageId, $typeId): array
     {
         return (new Query())->select(['*'])

@@ -5,7 +5,7 @@ namespace app\commands;
 use Yii;
 use yii\console\Controller;
 /**
- * Инициализатор RBAC выполняется в консоли php yii my-rbac/init
+ * Инициализатор RBAC
  */
 class MyRbacController extends Controller {
 
