@@ -12,7 +12,6 @@ use app\models\repositories\DataRepository;
 use nkostadinov\user\models\User;
 use app\models\UserRequest;
 use yii\web\ForbiddenHttpException;
-use app\models\AssigmentUser;
 
 class HomeController extends Controller
 {
@@ -24,13 +23,6 @@ class HomeController extends Controller
     public function actionIndex()
     {
         $calculatedForm  = new CalculatedForm();
-        $username = 'Антон';
-        $is_alert = 0;
-        if (Yii::$app->user->isGuest === false) {
-            $user = User::findById(Yii::$app->user->id);
-            $username = $user['username'];
-            $is_alert = $user['is_alert'];
-        }
         $repository = new DataRepository();
         $months = $repository->findMonths();
         $tonnages = $repository->findTonnages();
@@ -39,13 +31,24 @@ class HomeController extends Controller
             Yii::$app->response->format = Response::FORMAT_JSON;
             return ActiveForm::validate($calculatedForm);
         }
+        if (Yii::$app->user->isGuest === false) {
+            $user = User::findById(Yii::$app->user->id);
+            $username = $user['username'];
+            $is_alert = $user['is_alert'];
+            return $this->render('index', [
+                'calculatedForm' => $calculatedForm ,
+                'months' => $months,
+                'tonnages' => $tonnages,
+                'types' => $types,
+                'username' => $username,
+                'is_alert' => $is_alert,
+            ]);
+        }
         return $this->render('index', [
             'calculatedForm' => $calculatedForm ,
             'months' => $months,
             'tonnages' => $tonnages,
             'types' => $types,
-            'username' => $username,
-            'is_alert' => $is_alert,
         ]);
     }
 
@@ -192,64 +195,6 @@ class HomeController extends Controller
     {
         UserRequest::findOne($id)->delete();
         return $this->redirect('history');
-    }
-
-    public function actionUpdateroles()
-    {
-        if (!Yii::$app->user->can('admin')){
-            throw new ForbiddenHttpException('Access denied');
-        }
-        $roles = [];
-        foreach(Yii::$app->authManager->roles as $key => $value) {
-            $roles[] = $key;
-        }
-        $users = [];
-        foreach(User::find()->all()as $user) {
-           $users[$user['id']] =  $user['username'];
-        }
-        foreach($users as $key => $username) {
-            if (Yii::$app->user->identity->username === $username) {
-                unset($users[$key]);
-            };
-        }
-        $assigment = new AssigmentUser();
-        if (Yii::$app->request->isAjax && $assigment->load(Yii::$app->request->post())) {
-            Yii::$app->response->format = Response::FORMAT_JSON;
-            return ActiveForm::validate($assigment);
-        }
-
-        return $this->render('roles', [
-            'assigment' => $assigment,
-            'users' => $users,
-            'roles' => $roles,
-        ]);
-    }
-
-    public function actionRoleajax()
-    {
-        if (Yii::$app->request->isAjax === false) {
-            return $this->redirect('/');
-        }
-
-        Yii::$app->response->format = Response::FORMAT_JSON;
-
-        $assigment = new AssigmentUser();
-
-        if ($assigment->load(Yii::$app->request->post()) === false || $assigment->validate() === false) {
-            return $this->redirect('/');
-        }
-        $roles = [];
-        foreach(Yii::$app->authManager->roles as $key => $value) {
-            $roles[] = $key;
-        }
-        $user_id = $assigment->user_id;
-        $item_name = $roles[$assigment->item_name];
-        $assigment->createUserAssig($item_name, $user_id);
-        $user = User::findById($user_id);
-        return $this->renderAjax('done',[
-            'username' => $user->username,
-            'item_name'=> $item_name,
-        ]);
     }
 
 }

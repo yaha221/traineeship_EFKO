@@ -41,14 +41,31 @@ class AssigmentUser extends ActiveRecord
         ];
     }
 
-    public function createUserAssig ($item_name,$user_id)
+    public function getUserAssigs ()
+    {
+        return AssigmentUser::find()->select(['item_name','user_id'])->all();
+    }
+
+    public function appointUserAssig ($item_name, $user_id)
     {
         $auth = Yii::$app->getAuthManager();
-        $role = $auth->getRole('user');
-        $auth->revoke($role,$user_id);
-        $role = $auth->getRole('admin');
-        $auth->revoke($role,$user_id);
         $role = $auth->getRole($item_name);
-        $auth->assign($role, $user_id);
+        if ($auth->getAssignment($item_name, $user_id) === null) {
+            $auth->assign($role, $user_id);
+        }
+        return;
+    }
+
+    public function takeoffUserAssig ($item_name, $user_id)
+    {
+        $auth = Yii::$app->getAuthManager();
+        if ($item_name === 'admin') {
+            $role = $auth->getRole('admin');
+            $auth->revoke($role,$user_id);
+        }
+        if ($item_name === 'user') {
+            $role = $auth->getRole('user');
+            $auth->revoke($role,$user_id);
+        }
     }
 }
