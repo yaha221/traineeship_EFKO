@@ -49,11 +49,6 @@ class RoleController extends Controller
                 }
             }
         }
-        /*echo '<pre>';
-        var_dump($assigmentsTable);
-        var_dump($assigmentsItem);
-        echo '<pre>';
-        die;*/
         return $this->render('roles', [
             'assigmentsTable' => $assigmentsTable,
             'assigmentsItem' => $assigmentsItem,
@@ -65,6 +60,10 @@ class RoleController extends Controller
 
     public function actionAppoint()
     {
+        if (!Yii::$app->user->can('admin')){
+            throw new ForbiddenHttpException('Access denied');
+        }
+
         $assigment = new AssigmentUser();
 
         if ($assigment->load(Yii::$app->request->post()) === false || $assigment->validate() === false) {
@@ -84,6 +83,10 @@ class RoleController extends Controller
     
     public function actionTakeoff()
     {
+        if (!Yii::$app->user->can('admin')){
+            throw new ForbiddenHttpException('Access denied');
+        }
+
         $assigment = new AssigmentUser();
 
         if ($assigment->load(Yii::$app->request->post()) === false || $assigment->validate() === false) {
