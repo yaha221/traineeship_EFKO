@@ -1,6 +1,6 @@
 <?php
 
-use yii\db\Migration;
+use app\migrations\Migration;
 use yii\db\Schema;
 
 class m150323_111336_token extends Migration

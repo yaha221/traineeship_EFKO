@@ -2,7 +2,7 @@
 
 //namespace nkostadinov\user\migrations;
 
-use yii\db\Migration;
+use app\migrations\Migration;
 use yii\db\Schema;
 
 class m141215_094938_init extends Migration
