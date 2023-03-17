@@ -1,13 +1,10 @@
 <?php
 
-/* @var $this \yii\web\View */
-/* @var $content string */
-
-use app\widgets\Alert;
 use yii\helpers\Html;
 use yii\bootstrap\NavBar;
 use yii\bootstrap\Nav;
 use yii\widgets\Breadcrumbs;
+use app\widgets\Alert;
 use app\assets\AppAsset;
 
 AppAsset::register($this);
@@ -43,8 +40,9 @@ AppAsset::register($this);
             ( ['label' => 'Войти в систему', 'url' => ['/user/security/login']] ) : (
             ['label' => Yii::$app->user->identity->username,
             'items' => [
-                ['label' => 'История расчётов', 'url' => ['/home/history'], 'visible' => Yii::$app->user->isGuest === false],
-                ['label' => 'Пользователи', 'url' => ['/user/admin'], 'visible' => Yii::$app->user->can('admin')],
+                ['label' => 'История расчётов', 'url' => ['/client/history'], 'visible' => Yii::$app->user->isGuest === false],
+                ['label' => 'Пользователи', 'url' => ['/admin/users'], 'visible' => Yii::$app->user->can('admin')],
+                ['label' => 'Применение обновлений', 'url' => ['/release-control'], 'visible' => Yii::$app->user->can('admin')],
                 ['label' => 'Выход', 'url' => ['/user/security/logout'], 'linkOptions' => ['data-method' => 'post']],
                 ],
             ]
@@ -55,7 +53,12 @@ AppAsset::register($this);
 ?>
         <div class="container">
             <?= Breadcrumbs::widget([
-            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
+                'homeLink' => [
+                    'label' => Yii::t('yii', 'Главная'),
+                    'url' => ['/calculate'],
+                    'class' => 'calculate',
+                ],
+                'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) ?>
         <?= Alert::widget() ?>
         <?= $content ?>

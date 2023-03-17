@@ -5,8 +5,8 @@ namespace app\commands;
 use yii\console\Controller;
 use yii\console\ExitCode;
 use yii\helpers\Console;
-use app\models\repositories\DataRepository;
 use LucidFrame\Console\ConsoleTable;
+use app\models\repositories\DataRepository;
 
 /**
  * CalculateController команда работы приложения в консоли

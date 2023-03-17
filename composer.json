@@ -18,10 +18,18 @@
         "yiisoft/yii2": "~2.0.14",
         "yiisoft/yii2-bootstrap": "~2.0.0",
         "yiisoft/yii2-swiftmailer": "~2.0.0 || ~2.1.0",
+        "yiisoft/yii2-redis": "~2.0.0",
         "tlr/html-table-builder": "^1.1",
-        "nkostadinov/yii2-user": "0.12-beta"
+        "nkostadinov/yii2-user": "0.12-beta",
+        "twbs/bootstrap": "^5.2",
+        "jenssegers/date": "^4.0",
+        "kartik-v/yii2-grid": "dev-master",
+        "kartik-v/yii2-widget-switchinput": "dev-master",
+        "rmrevin/yii2-fontawesome": "2.10.*"
     },
     "require-dev": {
+        "kartik-v/yii2-date-range": "dev-master",
+        "kartik-v/yii2-widget-select2": "dev-master",
         "yiisoft/yii2-debug": "~2.1.0",
         "yiisoft/yii2-gii": "~2.1.0",
         "yiisoft/yii2-faker": "~2.0.0",
@@ -32,12 +40,16 @@
         "codeception/module-filesystem": "^1.0.0",
         "codeception/module-yii2": "^1.0.0",
         "codeception/module-asserts": "^1.0.0",
-        "phplucidframe/console-table": "^1.2"
+        "phplucidframe/console-table": "^1.2",
+        "symfony/var-dumper": "^5.4"
     },
     "config": {
-        "process-timeout": 1800,
+        "process-timeout": 600,
         "fxp-asset": {
             "enabled": false
+        },
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true
         }
     },
     "scripts": {

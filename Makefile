@@ -8,10 +8,12 @@ install:
 docker-build: \
 	docker-build-nginx \
 	docker-build-php-fpm \
-	docker-build-php-cli
+	docker-build-php-cli \
+	npm-install
+
 
 up:
-	@docker-compose up -d ${PHP_FMP_CONTAINER_NAME} ${NGINX_CONTAINER_NAME}
+	@docker-compose up --build -d ${PHP_FMP_CONTAINER_NAME} ${NGINX_CONTAINER_NAME} ${DB_CONTAINER_NAME} ${REDIS_CONTAINER_NAME}
 
 down:
 	@docker-compose down --remove-orphans
@@ -36,5 +38,21 @@ app-php-cli-exec:
 composer-install:
 	$(MAKE) app-php-cli-exec cmd="composer install"
 
+yii-migrate:
+	$(MAKE) app-php-cli-exec cmd="./yii migrate"
+
 chown:
 	@$(MAKE) app-php-cli-exec cmd="chown 1000:1000 -R ./"
+
+yii-rbac-init:
+	$(MAKE) app-php-cli-exec cmd="./yii my-rbac/init"
+
+npm-install:
+	@docker-compose run --rm ${NODE_CONTAINER_NAME} mkdir -p node_modules
+	@docker-compose run --rm ${NODE_CONTAINER_NAME} npm i
+
+build:
+	@docker-compose run --rm ${NODE_CONTAINER_NAME} npm run build
+
+watch:
+	@docker-compose run --rm ${NODE_CONTAINER_NAME} npm run watch

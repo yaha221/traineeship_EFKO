@@ -2,7 +2,7 @@
         var form = $(this);
         var data = form.serialize();
         $.ajax({
-            url: '/home/feedback',
+            url: '/calculate/feedback',
             type: 'POST',
             data: data,
             success: function(data){
@@ -18,7 +18,7 @@
     })
     $('#close-alert').on('click', function(){
         $.ajax({
-            url: '/home/removealert',
+            url: '/client/removealert',
             type: 'POST',
             success: function(){
                 document.getElementById('my-alert').remove();
